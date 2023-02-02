@@ -10,3 +10,4 @@ torch==1.10.0+cu113
 torchaudio==0.10.0+cu113
 torchinfo==1.5.3
 wandb~=0.12.7
+tqdm

@@ -8,7 +8,7 @@ import torchaudio
 import soundfile as sf
 import argparse
 import wandb
-
+import tqdm
 
 @torch.no_grad()
 def enhance_one_track(model, audio_path, saved_dir, cut_len, n_fft=400, hop=100, save_tracks=False):
@@ -63,7 +63,7 @@ def evaluation(model_path, noisy_dir, clean_dir, save_tracks, saved_dir):
     audio_list = natsorted(audio_list)
     num = len(audio_list)
     metrics_total = np.zeros(6)
-    for audio in audio_list:
+    for audio in tqdm.tqdm(audio_list):
         noisy_path = os.path.join(noisy_dir, audio)
         clean_path = os.path.join(clean_dir, audio)
         est_audio, length = enhance_one_track(model, noisy_path, saved_dir, 16000*16, n_fft, n_fft//4, save_tracks)
