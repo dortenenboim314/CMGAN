@@ -7,6 +7,7 @@ from utils import *
 import torchaudio
 import soundfile as sf
 import argparse
+import wandb
 
 
 @torch.no_grad()
@@ -72,6 +73,11 @@ def evaluation(model_path, noisy_dir, clean_dir, save_tracks, saved_dir):
         metrics = np.array(metrics)
         metrics_total += metrics
 
+        enhanced_wandb_audio = wandb.Audio(est_audio.squeeze().numpy(), sample_rate=sr, caption=audio)
+        log_dict = {f'test samples/{audio}/audio': enhanced_wandb_audio}
+        wandb.log(log_dict)
+
+
     metrics_avg = metrics_total / num
     print('pesq: ', metrics_avg[0], 'csig: ', metrics_avg[1], 'cbak: ', metrics_avg[2], 'covl: ',
           metrics_avg[3], 'ssnr: ', metrics_avg[4], 'stoi: ', metrics_avg[5])
@@ -84,11 +90,17 @@ parser.add_argument("--test_dir", type=str, default='dir to your VCTK-DEMAND tes
                     help="noisy tracks dir to be enhanced")
 parser.add_argument("--save_tracks", type=str, default=True, help="save predicted tracks or not")
 parser.add_argument("--save_dir", type=str, default='./saved_tracks_best', help="where enhanced tracks to be saved")
+parser.add_argument("--experiment_name", type=str, default="CMGAN", help="name of the experiment")
+parser.add_argument("--log_to_wandb", type=str, default=True, help="log samples to wandb or not")
 
 args = parser.parse_args()
 
 
 if __name__ == '__main__':
+    if args.log_to_wandb:
+        wandb.init(mode='online', project="Joint-Denoising-BWE", entity='huji-dl-audio-lab',
+                   group=args.experiment_name, name=args.experiment_name)
+
     noisy_dir = os.path.join(args.test_dir, 'noisy')
     clean_dir = os.path.join(args.test_dir, 'clean')
     evaluation(args.model_path, noisy_dir, clean_dir, args.save_tracks, args.save_dir)
