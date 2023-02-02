@@ -86,7 +86,9 @@ def evaluation(model_path, noisy_dir, clean_dir, save_tracks, saved_dir):
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_path", type=str, default='./best_ckpt/ckpt_80',
                     help="the path where the model is saved")
-parser.add_argument("--test_dir", type=str, default='dir to your VCTK-DEMAND test dataset',
+parser.add_argument("--noisy_dir", type=str, default='dir to your VCTK-DEMAND test dataset',
+                    help="noisy tracks dir to be enhanced")
+parser.add_argument("--clean_dir", type=str, default='dir to your VCTK-DEMAND test dataset',
                     help="noisy tracks dir to be enhanced")
 parser.add_argument("--save_tracks", type=str, default=True, help="save predicted tracks or not")
 parser.add_argument("--save_dir", type=str, default='./saved_tracks_best', help="where enhanced tracks to be saved")
@@ -101,6 +103,6 @@ if __name__ == '__main__':
         wandb.init(mode='online', project="Joint-Denoising-BWE", entity='huji-dl-audio-lab',
                    group=args.experiment_name, name=args.experiment_name)
 
-    noisy_dir = os.path.join(args.test_dir, 'noisy')
-    clean_dir = os.path.join(args.test_dir, 'clean')
+    noisy_dir = args.noisy_dir
+    clean_dir = args.clean_dir
     evaluation(args.model_path, noisy_dir, clean_dir, args.save_tracks, args.save_dir)
