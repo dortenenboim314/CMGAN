@@ -73,7 +73,7 @@ def evaluation(model_path, noisy_dir, clean_dir, save_tracks, saved_dir):
         metrics = np.array(metrics)
         metrics_total += metrics
 
-        enhanced_wandb_audio = wandb.Audio(est_audio.squeeze().numpy(), sample_rate=sr, caption=audio)
+        enhanced_wandb_audio = wandb.Audio(est_audio.squeeze(), sample_rate=sr, caption=audio)
         log_dict = {f'test samples/{audio}/audio': enhanced_wandb_audio}
         wandb.log(log_dict)
 
